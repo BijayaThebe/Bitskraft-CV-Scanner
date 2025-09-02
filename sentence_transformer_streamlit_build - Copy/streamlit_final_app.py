@@ -1,9 +1,9 @@
-# streamlit_final_app.py
 import streamlit as st
 import pandas as pd
 import os
 import pythoncom
 from pathlib import Path
+from outlook_work import config
 
 # Import modules
 try:
@@ -136,7 +136,6 @@ if app_mode == "📧 Outlook CV Fetcher":
                     pythoncom.CoInitialize()
                     fetcher = OutlookCVFetcher(email_account=email_account, save_dir=str(SAVE_DIR))
                     downloaded_count = fetcher.process_jobbox()
-                    # Add None check for downloaded_count
                     if downloaded_count and downloaded_count > 0:
                         st.success(f"✅ {downloaded_count} CVs downloaded successfully!")
                     else:
@@ -156,7 +155,6 @@ if app_mode == "📧 Outlook CV Fetcher":
                 parser.save_to_excel()
                 if OUTPUT_CSV.exists():
                     df = pd.read_csv(OUTPUT_CSV)
-                    # Add None check for DataFrame
                     if df is not None and not df.empty:
                         st.session_state['parsed_df'] = df
                         st.session_state['parse_done'] = True
@@ -310,7 +308,6 @@ elif app_mode == "🧠 AI Resume Evaluator":
 
                     # Safe filtering - handle NaN and None values
                     if 'Error' in df.columns:
-                        # Remove rows with errors
                         df = df[~df['Error'].notna()]
                         df = df.drop(columns=['Error'], errors='ignore')
 
@@ -393,27 +390,19 @@ elif app_mode == "🏆 Final Ranked Results":
         # Merge
         merged_df = pd.merge(ai_df, parsed_df_renamed, on="Resume Name", how="left")
 
-        # Select and rename
+        # Select and rename early
         columns_to_keep = [
             "Rank", "Name", "Phone", "Email", "LinkedIn", "GitHub",
             "Overall Match Score", "Keywords Matched", "Semantic Relevance", "Resume Name"
         ]
-        # Only keep existing columns
-        existing_cols = [col for col in columns_to_keep if col in merged_df.columns]
-        final_df = merged_df[existing_cols].copy()
+        final_df = merged_df[[col for col in columns_to_keep if col in merged_df.columns]].copy()
 
-        final_df = final_df.rename(columns={
-            "Overall Match Score": "Score",
-            "Keywords Matched": "Keywords",
-            "Semantic Relevance": "Semantic Score",
-            "Resume Name": "FileName"
-        })
+        # Ensure numeric score
+        if 'Overall Match Score' in final_df.columns:
+            final_df['Overall Match Score'] = pd.to_numeric(final_df['Overall Match Score'], errors='coerce').fillna(0.0)
+            final_df = final_df.sort_values("Overall Match Score", ascending=False).reset_index(drop=True)
+            final_df["Rank"] = [f"{i+1}{'st' if i==0 else 'nd' if i==1 else 'rd' if i==2 else 'th'}" for i in range(len(final_df))]
 
-        # Safe sorting with None handling
-        if 'Score' in final_df.columns:
-            final_df['Score'] = pd.to_numeric(final_df['Score'], errors='coerce').fillna(0.0)
-            final_df = final_df.sort_values("Score", ascending=False).reset_index(drop=True)
-        
         st.session_state['final_ranked'] = final_df
 
         # Filter
@@ -426,20 +415,20 @@ elif app_mode == "🏆 Final Ranked Results":
         # Stylish display
         st.markdown("### 🏆 Ranked Candidates")
         if not final_df.empty:
-            # Safe formatting for display
+            # Safe formatting
             format_dict = {}
-            if 'Score' in final_df.columns:
-                format_dict['Score'] = "{:.3f}"
-            if 'Semantic Score' in final_df.columns:
-                format_dict['Semantic Score'] = "{:.3f}"
+            if 'Overall Match Score' in final_df.columns:
+                format_dict['Overall Match Score'] = "{:.3f}"
+            if 'Semantic Relevance' in final_df.columns:
+                format_dict['Semantic Relevance'] = "{:.3f}"
                 
             styled_df = display_df.style.format(format_dict)
             st.dataframe(styled_df, use_container_width=True)
 
             # Safe access to top score
             top_score = "N/A"
-            if len(final_df) > 0 and 'Score' in final_df.columns:
-                score_val = final_df['Score'].iloc[0]
+            if len(final_df) > 0 and 'Overall Match Score' in final_df.columns:
+                score_val = final_df['Overall Match Score'].iloc[0]
                 if score_val is not None:
                     top_score = f"{float(score_val):.3f}"
                     
@@ -494,28 +483,69 @@ elif app_mode == "🏆 Final Ranked Results":
                 # Get top candidates
                 top_candidates = final_df.head(num_candidates).copy()
                 
-                # Display candidates who will be contacted
-                st.markdown(f"### 📋 Top {num_candidates} Candidates to Contact")
+                # Sort by score descending
+                top_candidates_sorted = top_candidates.sort_values(by='Overall Match Score', ascending=False).reset_index(drop=True)
+
+                # Make Name and Email editable
                 display_cols = ['Name', 'Email']
-                if 'Score' in top_candidates.columns:
-                    display_cols.append('Score')
-                st.dataframe(top_candidates[display_cols])
-                
-                # Send emails button
+                if 'Overall Match Score' in top_candidates_sorted.columns:
+                    display_cols.append('Overall Match Score')
+
+                edited_candidates = st.data_editor(
+                    top_candidates_sorted[display_cols],
+                    column_config={
+                        "Name": st.column_config.TextColumn(
+                            "Name",
+                            help="Edit candidate's name",
+                            default="",
+                            max_chars=100,
+                            required=True,
+                        ),
+                        "Email": st.column_config.TextColumn(
+                            "Email",
+                            help="Edit candidate's email address",
+                            default="",
+                            max_chars=100,
+                            validate=r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                            required=True,
+                        ),
+                        "Overall Match Score": st.column_config.NumberColumn(
+                            "Score",
+                            help="Match score (read-only)",
+                            format="%.3f",
+                            disabled=True,
+                        ),
+                    },
+                    disabled=("Overall Match Score",) if "Overall Match Score" in display_cols else False,
+                    key="editable_candidate_table"
+                )
+
+                # Save edited data
+                st.session_state['edited_candidates'] = edited_candidates
+
+                # Show final list after edits
+                st.markdown("### ✅ Final Contact List (After Edits)")
+                for idx, row in edited_candidates.iterrows():
+                    rank = idx + 1
+                    name = row['Name'].strip()
+                    email = row['Email'].strip()
+                    score = f"{row['Overall Match Score']:.3f}" if not pd.isna(row['Overall Match Score']) else "N/A"
+                    st.write(f"**Rank {rank}**: {name} — `{email}` (Score: {score})")
+
+                # Send Emails Button
                 if st.button("🚀 Send Emails to Selected Candidates", type="primary"):
                     if not email_account or email_account == 'your-email@bitskraft.com':
                         st.error("Please set your Outlook email address in the Outlook CV Fetcher section first.")
                     else:
-                        with st.spinner(f"Sending emails to {num_candidates} candidates..."):
+                        with st.spinner(f"Sending emails to {len(edited_candidates)} candidates..."):
                             successful_emails = send_bulk_emails(
-                                top_candidates, 
-                                email_template, 
+                                edited_candidates,  # ✅ Use edited DataFrame
+                                email_template,
                                 email_account
                             )
                             
                             if successful_emails:
                                 st.success(f"✅ Successfully sent emails to {len(successful_emails)} candidates!")
-                                st.write("Emails sent to:")
                                 for email in successful_emails:
                                     st.write(f"- {email}")
                             else:
