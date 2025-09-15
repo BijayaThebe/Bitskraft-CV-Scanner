@@ -527,8 +527,8 @@ elif app_mode == "🏆 Final Ranked Results":
                 st.markdown("### ✅ Final Contact List (After Edits)")
                 for idx, row in edited_candidates.iterrows():
                     rank = idx + 1
-                    name = row['Name'].strip()
-                    email = row['Email'].strip()
+                    name = str(row['Name']).strip()
+                    email = str(row['Email']).strip()
                     score = f"{row['Overall Match Score']:.3f}" if not pd.isna(row['Overall Match Score']) else "N/A"
                     st.write(f"**Rank {rank}**: {name} — `{email}` (Score: {score})")
 
@@ -573,3 +573,11 @@ st.sidebar.markdown("""
 - **Model**: UniversalResumeAnalyzer
 - **Support**: hr-tech@bitskraft.com
 """)
+
+
+
+
+
+
+
+# https://docs.streamlit.io/deploy/tutorials/docker
