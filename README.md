@@ -20,3 +20,29 @@ resume_evaluator/
 │
 └── uploads/
     └── resumes/                   # Temp storage (optional)
+
+
+
+
+
+# Files and Folder Hierarchy
+```mermaid
+graph TD
+    A[Bitskraft-CV-Scanner] --> B[resume_evaluator]
+    B --> C[flask_app.py]
+    B --> D[model_handling.py]
+    B --> E[requirements.txt]
+    B --> F[static]
+    B --> G[templates]
+    B --> H[uploads]
+    F --> I[css]
+    F --> J[js]
+    F --> K[logo.png]
+    I --> L[style.css]
+    J --> M[script.js]
+    G --> N[index.html]
+    G --> O[results.html]
+    H --> P[resumes]
+```
+
+
