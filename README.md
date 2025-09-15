@@ -26,37 +26,23 @@ resume_evaluator/
 
 
 # Files and Folder Hierarchy
-flowchart TD
+```mermaid
+graph TD
+    A[Bitskraft-CV-Scanner] --> B[resume_evaluator]
+    B --> C[flask_app.py]
+    B --> D[model_handling.py]
+    B --> E[requirements.txt]
+    B --> F[static]
+    B --> G[templates]
+    B --> H[uploads]
+    F --> I[css]
+    F --> J[js]
+    F --> K[logo.png]
+    I --> L[style.css]
+    J --> M[script.js]
+    G --> N[index.html]
+    G --> O[results.html]
+    H --> P[resumes]
+```
 
-    A[AI CV Scanner for Hiring Managers]
 
-    subgraph B[resume_evaluator/]
-        B1[flask_app.py<br/>Flask backend]
-        B2[model_handling.py<br/>AI logic]
-        B3[requirements.txt]
-
-        subgraph C[static/]
-            C1[css/style.css<br/>Custom styling]
-            C2[js/script.js<br/>Interactive behavior]
-            C3[logo.png<br/>bitskraft.com logo]
-        end
-
-        subgraph D[templates/]
-            D1[index.html<br/>Main page]
-            D2[results.html<br/>Results page]
-        end
-
-        subgraph E[uploads/]
-            E1[resumes/<br/>Temp storage (optional)]
-        end
-    end
-
-    %% Connections
-    A --> B
-    B1 --> D1
-    B1 --> D2
-    B2 --> B1
-    C1 --> D1
-    C2 --> D1
-    C3 --> D1
-    E1 --> B1
