@@ -1,15 +1,14 @@
+import os
 import streamlit as st
 import pandas as pd
-import os
-import pythoncom
 from pathlib import Path
-from outlook_work import config
+from resume_work import config
 
 # Import modules
 try:
-    from outlook_work.downloader import OutlookCVFetcher, send_bulk_emails, DEFAULT_EMAIL_TEMPLATE
-    from outlook_work.resume_Parse import ResumeParser
-    from outlook_work.config import get_save_directory
+    from resume_work.email_sender import DEFAULT_EMAIL_TEMPLATE, OutlookEmailSender
+    from resume_work.resume_Parse import ResumeParser
+    from resume_work.config import get_save_directory
 except ImportError as e:
     st.error(f"❌ Failed to import Outlook modules: {e}")
     st.stop()
@@ -35,7 +34,7 @@ st.set_page_config(
 st.sidebar.title("🧭 Navigation")
 app_mode = st.sidebar.radio(
     "Choose Mode",
-    ["📧 Outlook CV Fetcher", "🧠 AI Resume Evaluator", "🏆 Final Ranked Results"],
+    ["📧  CV Parser", "🧠 AI Resume Evaluator", "🏆 Final Ranked Results"],
     help="Switch between app sections"
 )
 
@@ -79,8 +78,8 @@ def save_path_to_config(path):
 # -------------------------------
 # MODE 1: Outlook CV Fetcher
 # -------------------------------
-if app_mode == "📧 Outlook CV Fetcher":
-    st.title("📧 Outlook CV Fetcher & Parser")
+if app_mode == "📧  CV Parser":
+    st.title("📧  CV Parser")
 
     st.markdown("""
     **Automatically download CVs from Outlook and parse them into structured data.**
@@ -119,32 +118,6 @@ if app_mode == "📧 Outlook CV Fetcher":
     SAVE_DIR = Path(SAVE_DIR).resolve()
     SAVE_DIR.mkdir(parents=True, exist_ok=True)
     OUTPUT_CSV = SAVE_DIR / "candidates.csv"
-
-    # Outlook Integration
-    st.header("📥 Outlook Integration")
-    email_account = st.text_input("📧 Enter Your Outlook Email", value=st.session_state['email_account'])
-
-    # Store email in session state when changed
-    if email_account and email_account != st.session_state['email_account']:
-        st.session_state['email_account'] = email_account
-        st.success("✅ Email address saved!")
-
-    if st.checkbox("✅ Enable Outlook Integration", key="enable_outlook"):
-        if st.button("📥 Fetch CVs from Outlook"):
-            with st.spinner("🔗 Connecting to Outlook..."):
-                try:
-                    pythoncom.CoInitialize()
-                    fetcher = OutlookCVFetcher(email_account=email_account, save_dir=str(SAVE_DIR))
-                    downloaded_count = fetcher.process_jobbox()
-                    if downloaded_count and downloaded_count > 0:
-                        st.success(f"✅ {downloaded_count} CVs downloaded successfully!")
-                    else:
-                        st.info("📭 No new CVs found in JobBox.")
-                    st.rerun()
-                except Exception as e:
-                    st.error(f"❌ Outlook error: {e}")
-                finally:
-                    pythoncom.CoUninitialize()
 
     # Parse Resumes
     if st.button("🔄 Parse All Resumes", key="parse"):
@@ -532,24 +505,37 @@ elif app_mode == "🏆 Final Ranked Results":
                     score = f"{row['Overall Match Score']:.3f}" if not pd.isna(row['Overall Match Score']) else "N/A"
                     st.write(f"**Rank {rank}**: {name} — `{email}` (Score: {score})")
 
-                # Send Emails Button
+
+                # In your Final Ranked Results section, where you call send_bulk_emails
+
                 if st.button("🚀 Send Emails to Selected Candidates", type="primary"):
                     if not email_account or email_account == 'your-email@bitskraft.com':
-                        st.error("Please set your Outlook email address in the Outlook CV Fetcher section first.")
+                        st.error("Please set your Outlook email address in the AI Evaluator section first.")
                     else:
                         with st.spinner(f"Sending emails to {len(edited_candidates)} candidates..."):
-                            successful_emails = send_bulk_emails(
-                                edited_candidates,  # ✅ Use edited DataFrame
-                                email_template,
-                                email_account
-                            )
-                            
+                            sender = OutlookEmailSender(email_account)  # ✅ Uses SMTP, works on Streamlit Cloud!
+                            successful_emails = []
+
+                            for idx, row in edited_candidates.iterrows():
+                                name = row['Name']
+                                email = row['Email']
+                                subject = email_template['subject'].format(position="Software Engineer")  # Customize as needed
+                                body = email_template['body'].format(
+                                    candidate_name=name,
+                                    position="Software Engineer",
+                                    keywords_matched=row.get('Keywords Matched', '')
+                                )
+
+                                if sender.send_email(email, subject, body=body):
+                                    successful_emails.append(email)
+
                             if successful_emails:
                                 st.success(f"✅ Successfully sent emails to {len(successful_emails)} candidates!")
                                 for email in successful_emails:
                                     st.write(f"- {email}")
                             else:
-                                st.error("❌ Failed to send any emails. Please check your Outlook configuration.")
+                                st.error("❌ Failed to send any emails. Please check your credentials and internet connection.")
+
             else:
                 st.warning("⚠️ No candidates available for emailing.")
         else:
@@ -558,7 +544,7 @@ elif app_mode == "🏆 Final Ranked Results":
     else:
         st.warning("⚠️ Please complete both **Outlook Parsing** and **AI Evaluation** to see final results.")
         st.info("""
-        - Go to **📧 Outlook CV Fetcher** to parse resumes.
+        - Go to **📧  CV Parser** to parse resumes.
         - Go to **🧠 AI Resume Evaluator** to analyze them.
         - Then return here to see the unified ranked list.
         """)
@@ -574,10 +560,3 @@ st.sidebar.markdown("""
 - **Support**: hr-tech@bitskraft.com
 """)
 
-
-
-
-
-
-
-# https://docs.streamlit.io/deploy/tutorials/docker
