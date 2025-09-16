@@ -1,4 +1,4 @@
-# 📘 User Manual for CV Parsing & Shortlisting System (Bitskraft-CV-Scanner)
+<img width="948" height="218" alt="image" src="https://github.com/user-attachments/assets/c2079fdc-bb8a-4dc1-b7b6-950c1d9f3de0" /># 📘 User Manual for CV Parsing & Shortlisting System (Bitskraft-CV-Scanner)
 
 ## 1. Introduction
 The Bitskraft-CV-Scanner is a web-based application designed to help hiring managers and recruiters automatically parse, analyze, and shortlist resumes based on their relevance to a job description. Key features include:
@@ -9,11 +9,15 @@ The Bitskraft-CV-Scanner is a web-based application designed to help hiring mana
    -  Matching important keywords from the job description to the resume
    -  Producing an overall match score, summary (e.g. “Strong Match”, “Needs Improvement”), and list of matched keywords
    -  Providing a simple web interface (via Streamlit or Flask) for uploading, viewing results, and managing shortlists
+   -  Sending email notifications to shortlisted candidates directly through Outlook (win32 client).
+
 
 ---
 
 ## 2. Architecture & File Structure
 Here’s a breakdown of the main directories and files in the GitHub repo, and their responsibilities:
+<img width="948" height="218" alt="image" src="https://github.com/user-attachments/assets/0a146d9a-1336-4fb8-9fb3-d0b964b8c6c4" />
+
 
 ---
 
@@ -46,8 +50,8 @@ Produce a summary of the candidate’s resume with:
 - A qualitative summary (e.g. “Strong Match”, “Moderate Match”, etc.)
 
  
-### h. Presentation to User
-Show the result in a user-friendly format in the browser: which keywords matched, score breakdown, possibly suggestions for improvement.
+### h. Send Emails 
+Shortlisted candidates can be notified directly via Outlook from the browser  
 
 
 # Files and Folder Hierarchy
