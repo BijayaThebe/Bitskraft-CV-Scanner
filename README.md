@@ -140,21 +140,21 @@ graph TD
 
         - Keyword Matching(40%): Direct matching of specified job requirements and technical terms
 
-        Evaluation Process
+      Evaluation Process
 
-         1.Requirements Input: Enter your specific job requirements, skills and qualifications
-         2.Semantic Analysis: AI analyzes the contextual relevance and depth of candidate experience
-         3.Keyword Detections: System identifies exact matches for required technical skills and qualifications
-         4.Weighted Scoring: Combines both approaches with 60-40 weighting for comprehensive evaluation
-         5.Final Score: Generates overall compatibility score with detailed breakdown
+        1.Requirements Input: Enter your specific job requirements, skills and qualifications
+        2.Semantic Analysis: AI analyzes the contextual relevance and depth of candidate experience
+        3.Keyword Detections: System identifies exact matches for required technical skills and qualifications
+        4.Weighted Scoring: Combines both approaches with 60-40 weighting for comprehensive evaluation
+        5.Final Score: Generates overall compatibility score with detailed breakdown
 
-         What Gets Evaluated
+      What Gets Evaluated
 
-           - Technical Skills Relevance: How well candidate skills align with job requirements
-           - Experience Context: Quality and relevance of work experience (semantic understanding)
-           - Requirement Fulfillment: Direct matches for must-have qualifications
-           - Skill Depth: AI assessment of expertise level in required areas
-           - Industry Alignment: Contextual understanding of industry-specific experience
+        - Technical Skills Relevance: How well candidate skills align with job requirements
+        - Experience Context: Quality and relevance of work experience (semantic understanding)
+        - Requirement Fulfillment: Direct matches for must-have qualifications
+        - Skill Depth: AI assessment of expertise level in required areas
+        - Industry Alignment: Contextual understanding of industry-specific experience
 
            
   # 🔒 Security & Privacy
