@@ -24,37 +24,45 @@ Here’s a breakdown of the main directories and files in the GitHub repo, and t
 ## 3. How It Works (User Workflow & Processing Flow)
 Here’s a typical flow from uploading a resume to obtaining a shortlist or match score:
 
-### a. User Uploads Resume & Enters Job Description
+**a. User Uploads Resume & Enters Job Description**
+
 Through the web interface (Flask or Streamlit), the user uploads one or more resumes and provides a job description text.
 
-### b. Text Extraction
+**b. Text Extraction**
 - If the resume is text-based (PDF / DOCX), extract text directly.
 - If it’s a scanned PDF (no embedded text), apply OCR to extract readable content.
  
-### c. Preprocessing
+**c. Preprocessing**
+
 Clean the extracted text: normalize whitespace, remove punctuation, lowercasing, etc.
 
-### d. Keyword Extraction from Job Description
+**d. Keyword Extraction from Job Description**
+
 Extract important terms/technologies/skills from the job description. This may include tech keywords, proper nouns, etc.
 
-### e. Semantic Similarity Calculation
+**e. Semantic Similarity Calculation**
+
 Compute embeddings for both the resume text and the job description. Use a SentenceTransformer (or similar) model to measure semantic similarity.
 
-### f. Keyword Matching & Scoring
+**f. Keyword Matching & Scoring**
+
 Check which of the extracted keywords are present in the resume text. Combine this with the semantic similarity to compute an overall match score.
 
-### g. Result Generation
+**g. Result Generation**
+
 Produce a summary of the candidate’s resume with:
 - Overall match score
 - Semantic relevance component
 - A qualitative summary (e.g. “Strong Match”, “Moderate Match”, etc.)
 
  
-### h. Send Emails 
+**h. Send Emails**
+
 Shortlisted candidates can be notified directly via Outlook from the browser  
 
+---
 
-# Files and Folder Hierarchy
+## 4. Files and Folder Hierarchy
 ```mermaid
 graph TD
     A[Bitskraft-CV-Scanner] --> B[resume_evaluator]
@@ -73,39 +81,47 @@ graph TD
     G --> O[results.html]
     H --> P[resumes]
 ```
-# 🛠️ Pre-requisites
+---
+
+## 5. 🛠️ Pre-requisites
    - Python 3.8 or higher
    
    - pip(python package installer)
    
    - Web browser(Chrome,Edge,Safari, etc.)
+---
 
-# ⚡ How to start
-  1. Clone the Repository
+## 6. ⚡ How to start
+  **1. Clone the Repository**
+  ``` bash
      
      git clone https://github.com/yourusername/Bitskraft-CV-Scanner.git
      
      cd BitsKraft-CV-Scanner
+```
 <img width="814" height="127" alt="image" src="https://github.com/user-attachments/assets/a313acee-68ef-4663-8cf0-1eeb3142a0c5" />
   
-  2. Set Up Virtual Environment(Recommended)
+  **2. Set Up Virtual Environment(Recommended)**
   <img width="799" height="284" alt="image" src="https://github.com/user-attachments/assets/665dc951-ae2b-4d21-83c5-8ce639530294" />
   
-  3. Install Dependencies
-
+ **3. Install Dependencies**
+``` bash
      cd resume_evaluator
 
      pip install -r requirements.txt
+```
 <img width="801" height="119" alt="image" src="https://github.com/user-attachments/assets/5c4b7922-f04a-4a3e-a3b0-bc5b214a289e" />
 
-  4. Run the Application
-
+ **4. Run the Application**
+```bash
      python flask_app.py
+```
 <img width="809" height="103" alt="image" src="https://github.com/user-attachments/assets/3041002c-4dd4-4d93-8b54-62dfdc46a0aa" />
 
   The application will be available at http://localhost:8500
+  ---
 
-  # 📋 Usage
+  ## 7. 📋 Usage
 
     1.Access the Application: Open your web browser and navigate to http://localhost:8500
     2.Upload Resume: Click the upload button and select CV files (PDF, DOCX Supported)
@@ -113,15 +129,19 @@ graph TD
     4.Start Analysis: Click "Analyze" to begin the AI evaluation process
     5.View Results: Review comprehensive analysis reports and scores
     6.Export Reports: Download detailed evaluation reports and record-keeping
+    
+   ---
 
-  # 🔧 Configuaration
+  ## 8. 🔧 Configuaration
 
    Environment Variables
 
     Create .env file in the resume_evaluator directory:
     <img width="778" height="171" alt="image" src="https://github.com/user-attachments/assets/539ec9ff-aecf-45a3-90a6-2f242b29f154" />
 
-  # Model Configuration
+---
+
+  ## 9. Model Configuration
 
      Customize AI evaluation parameters in model_handling.py :
 
@@ -130,7 +150,9 @@ graph TD
       - Industry-specific requirements
       - Language processing settings
 
-  # 📊 Evaluation Criteria
+   ---
+
+  ## 10. 📊 Evaluation Criteria
 
      The AI scanner uses a dual-approach evaluation system based on job requirements you  specify:
 
@@ -156,15 +178,18 @@ graph TD
         - Skill Depth: AI assessment of expertise level in required areas
         - Industry Alignment: Contextual understanding of industry-specific experience
 
-           
-  # 🔒 Security & Privacy
+   ---
+   
+  ## 11. 🔒 Security & Privacy
 
        - All uploaded files are processed locally
        - Temporary files are automatically cleaned up
        - No personal data is stored permanently
        - Secure file handling protocols implemented
+
+   ---
        
-  # 🚧 Development
+  ## 12. 🚧 Development
 
       Adding New Features
 
@@ -176,11 +201,16 @@ graph TD
        6.Push to the branch (git push origin feature/new-feature)
        7.Create a Pull Request
 
- # Running tests
+   ---
+
+ ## 13. Running tests
 
 <img width="778" height="206" alt="image" src="https://github.com/user-attachments/assets/dfb5c925-e5f5-40ea-8aa2-271602c9f5f2" />
 
- # 📦 Dependencies
+---
+
+
+ ## 14. 📦 Dependencies
 
       Key dependencies include:
 
@@ -192,8 +222,9 @@ graph TD
         - pandas: Data manipulation
         - numpy: Numerical computing
       See requirements.txt for complete list.
+   ---
 
- # 🐛 Troubleshooting
+ ## 15. 🐛 Troubleshooting
 
        Common Issues
 
@@ -214,17 +245,18 @@ graph TD
         - Consider upgrading hardware for large batch processing
         - Optimize model parameters for your use case
         - Check available disk space
+---
 
-   # 📈 Performance
+   ## 16. 📈 Performance
 
          - Processing Speed: ~2-5 seconds per resume
          - Batch Capacity: Up to 50 resumes simultaneously
          - Accuracy Rate: 85-95% depending on resume quality
          - Supported Formats: PDF, DOC, DOCX
          - Languages: English (primary), expandable
-
+---
   
-   # 🤝 Contributing
+   ## 17. 🤝 Contributing
 
        We welcome contributions! Please see our Contributing Guidelines for details on:
 
@@ -232,8 +264,9 @@ graph TD
          - Pull request process
          - Issue reporting
          - Development setup
+   ---
 
-  # 👥 Team
+  ## 18. 👥 Team
 
           Bitskraft Development Team
              - Bijaya Thebe
@@ -243,18 +276,19 @@ graph TD
 
           Visit us at bitskraft.com
           Contact: contact@bitskraft.com
-
-  # 🙏 Acknowledgments
+---
+  ## 19. 🙏 Acknowledgments
 
            - Open-source ML libraries and frameworks
            - Resume parsing algorithms research
 
-  # 📞 Support
+---
+  ## 20. 📞 Support
 
            For support and questions
            -
+---
 
-
-Made by the Bitskraft Team
+# Made by the Bitskraft Team
   
 
