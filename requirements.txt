@@ -1,0 +1,20 @@
+streamlit==1.48.1
+pandas==2.3.2
+numpy==2.3.2
+PyMuPDF==1.26.3          # For PDF text extraction
+pypdf==6.0.0             # Alternative PDF lib
+pillow==11.3.0           # Image handling
+python-docx==1.2.0       # For .docx files
+pytesseract==0.3.13      # OCR for scanned resumes (if needed)
+opencv-python-headless   # Optional: if using image preprocessing
+
+# For NLP / resume parsing (if using transformers)
+sentence-transformers==5.1.0
+transformers==4.55.3
+torch==2.8.0             # Only if using local models
+
+# Optional: for sending emails or API calls
+requests==2.32.5
+
+# Optional: if you need config/env management
+python-dotenv==1.0.1
