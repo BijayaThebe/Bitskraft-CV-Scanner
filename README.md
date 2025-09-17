@@ -292,5 +292,6 @@ graph TD
 ---
 
 # Made by the Bitskraft Team
-  
+  <img width="1044" height="287" alt="image" src="https://github.com/user-attachments/assets/e4b93672-bf05-4452-b121-09ac97afafd5" />
+
 
