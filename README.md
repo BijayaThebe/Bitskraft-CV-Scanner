@@ -1,4 +1,6 @@
 # 📘 User Manual for CV Parsing & Shortlisting System (Bitskraft-CV-Scanner)
+<img width="1487" height="824" alt="image" src="https://github.com/user-attachments/assets/a03d5e6b-9af2-4301-bccd-ae8c999089ba" />
+
 
 ## 1. Introduction
 The Bitskraft-CV-Scanner is a web-based application designed to help hiring managers and recruiters automatically parse, analyze, and shortlist resumes based on their relevance to a job description. Key features include:
