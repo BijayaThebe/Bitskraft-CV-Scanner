@@ -65,19 +65,17 @@ Shortlisted candidates can be notified directly via Outlook from the browser
 ---
 
 ## 4. Files and Folder Hierarchy
-```mermaid
 ## Project Architecture
 graph TD
     A[Bitskraft-CV-Scanner] --> B[resume_work/]
     A --> C[streamlit_app.py]
     A --> D[model_handling.py]
     A --> E[cv_save_path.txt]
-    A --> F[rough.txt]
+    A --> F[requirements.txt]
 
     B --> B1[email_sender.py]
     B --> B2[config.py]
     B --> B3[resume_parse.py]
-```
 
 ## 5. 🛠️ Pre-requisites
    - Python 3.8 or higher
