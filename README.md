@@ -110,9 +110,8 @@ graph TD
 
  **4. Run the Application**
 ```bash
-     python flask_app.py
+     Streamlit run streamlit_app.py
 ```
-<img width="809" height="103" alt="image" src="https://github.com/user-attachments/assets/3041002c-4dd4-4d93-8b54-62dfdc46a0aa" />
 
   The application will be available at http://localhost:8500
   ---
@@ -210,7 +209,6 @@ graph TD
 
       Key dependencies include:
 
-        - Flask: Web framework
         - PyPDF2/pdfplumber: PDF processing
         - python-docx: Word document handling
         - scikit-learn: Machine learning algorithms
